@@ -1,5 +1,5 @@
-🛍️ AppVendas
-Aplicativo de Força de Venda simples desenvolvido em Flutter. Permite realizar cadastros e gerenciamento de usuários, clientes e produtos, com armazenamento local em arquivos JSON.
+# AppVendas
+🛍️ Aplicativo de Força de Venda simples desenvolvido em Flutter. Permite realizar cadastros e gerenciamento de usuários, clientes e produtos, com armazenamento local em arquivos JSON.
 
 🚀 Funcionalidades:
 

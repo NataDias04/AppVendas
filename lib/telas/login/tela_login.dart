@@ -28,7 +28,7 @@ class _TelaLoginState extends State<TelaLogin> {
         _mensagemErro = 'Usuário ou senha inválidos';
       });
     }
-  }
+  } //
 
   @override
   Widget build(BuildContext context) {

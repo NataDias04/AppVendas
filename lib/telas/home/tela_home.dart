@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TelaHome extends StatelessWidget {
-  const TelaHome({super.key}); // Construtor constante adicionado aqui
+  const TelaHome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class TelaHome extends StatelessWidget {
               icon: Icons.inventory,
               label: 'Produtos',
               onTap: () {
-                // ação para produtos
+                Navigator.pushNamed(context, '/cadastroProduto');
               },
             ),
           ],

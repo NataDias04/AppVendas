@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'telas/login/tela_login.dart';
+import 'telas/home/tela_home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,11 @@ class MyApp extends StatelessWidget {
       title: 'Sistema de Login',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const TelaLogin(), // vai direto pro login
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const TelaLogin(),
+        '/home': (context) => const TelaHome(),
+      },
     );
   }
 }

@@ -21,8 +21,7 @@ class _TelaLoginState extends State<TelaLogin> {
 
     final sucesso = await _loginController.autenticar(nome, senha);
     if (sucesso) {
-      // Navegar para a tela principal (exemplo)
-      Navigator.pushReplacementNamed(context, '/home');
+       Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {
         _mensagemErro = 'Usuário ou senha inválidos';

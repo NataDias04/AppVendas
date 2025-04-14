@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../login/login_controller.dart';
+import '../../modelos/usuario.dart';
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin({super.key});
@@ -19,15 +20,20 @@ class _TelaLoginState extends State<TelaLogin> {
     final nome = _nomeController.text;
     final senha = _senhaController.text;
 
-    final sucesso = await _loginController.autenticar(nome, senha);
-    if (sucesso) {
-       Navigator.pushReplacementNamed(context, '/home');
+    final usuarioLogado = await _loginController.autenticar(nome, senha);
+    
+    if (usuarioLogado != null) {
+      Navigator.pushReplacementNamed(
+        context, 
+        '/home',
+        arguments: usuarioLogado,
+      );
     } else {
       setState(() {
         _mensagemErro = 'Usuário ou senha inválidos';
       });
     }
-  } //
+  }
 
   @override
   Widget build(BuildContext context) {

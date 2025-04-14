@@ -24,7 +24,7 @@ class TelaHome extends StatelessWidget {
               icon: Icons.person_add,
               label: 'Usuários',
               onTap: () {
-                // ação para usuários
+                Navigator.pushNamed(context, '/usuarios');
               },
             ),
             _iconeMenu(

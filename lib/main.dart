@@ -3,6 +3,7 @@ import 'telas/login/tela_login.dart';
 import 'telas/home/tela_home.dart';
 import 'telas/produto/tela_produto.dart';
 import 'telas/usuario/tela_usuario.dart';
+import 'modelos/usuario.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +21,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const TelaLogin(),
-        '/home': (context) => const TelaHome(),
+        '/home': (context) {
+          final usuarioLogado = ModalRoute.of(context)?.settings.arguments as Usuario;
+          return TelaHome(usuarioLogado: usuarioLogado);
+        },
         '/cadastroProduto': (context) => const TelaProduto(),
          '/usuarios': (context) => const TelaUsuario(),
       },

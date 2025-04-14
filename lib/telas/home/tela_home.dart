@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../modelos/usuario.dart';
 
 class TelaHome extends StatelessWidget {
-  const TelaHome({super.key});
+  final Usuario usuarioLogado;
+
+  TelaHome({super.key, required this.usuarioLogado});
 
   @override
   Widget build(BuildContext context) {
+    print('Perfil do usuário logado: ${usuarioLogado.perfil}');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -19,7 +23,7 @@ class TelaHome extends StatelessWidget {
           mainAxisSpacing: 30,
           crossAxisSpacing: 30,
           children: [
-            _iconeMenu(
+            if (usuarioLogado.perfil.toLowerCase() == 'admin') _iconeMenu(
               context,
               icon: Icons.person_add,
               label: 'Usuários',
@@ -32,7 +36,7 @@ class TelaHome extends StatelessWidget {
               icon: Icons.people,
               label: 'Clientes',
               onTap: () {
-                // ação para clientes
+                // Adicionar lógica para clientes
               },
             ),
             _iconeMenu(

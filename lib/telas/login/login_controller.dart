@@ -1,22 +1,31 @@
 import '../../repositorios/usuario_rep.dart';
+import '../../modelos/usuario.dart';
 
 class LoginController {
   final UsuarioRepositorio _repositorio = UsuarioRepositorio();
 
-  Future<bool> autenticar(String nome, String senha) async {
+  Future<Usuario?> autenticar(String nome, String senha) async {
     final usuarios = await _repositorio.listarUsuarios();
 
-    // Caso especial: primeiro acesso
     if (usuarios.isEmpty) {
-      return nome == 'admin' && senha == 'admin';
+      if (nome == 'admin' && senha == 'admin') {
+        return Usuario(
+          id: 1,
+          nome: 'admin',
+          senha: 'admin',
+          perfil: 'admin',
+          telefone: '00000000000',
+          email: 'admin@admin.com',
+        );
+      }
     }
 
     for (var usuario in usuarios) {
       if (usuario.nome == nome && usuario.senha == senha) {
-        return true;
+        return usuario;
       }
     }
 
-    return false;
+    return null;
   }
 }

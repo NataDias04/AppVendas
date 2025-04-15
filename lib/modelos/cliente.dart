@@ -1,9 +1,9 @@
 class Cliente {
   int id;
   String nome;
-  String tipo; // 'F' para Física e 'J' para Jurídica
+  String tipo;
   String cpfCnpj;
-  String? email;
+  String email;
   String telefone;
   String cep;
   String endereco;
@@ -16,7 +16,7 @@ class Cliente {
     required this.nome,
     required this.tipo,
     required this.cpfCnpj,
-    this.email,
+    required this.email,
     required this.telefone,
     required this.cep,
     required this.endereco,

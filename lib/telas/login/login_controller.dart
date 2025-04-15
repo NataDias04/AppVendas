@@ -1,22 +1,38 @@
 import '../../repositorios/usuario_rep.dart';
+import '../../modelos/usuario.dart';
 
 class LoginController {
   final UsuarioRepositorio _repositorio = UsuarioRepositorio();
 
-  Future<bool> autenticar(String nome, String senha) async {
-    final usuarios = await _repositorio.listarUsuarios();
+  Future<Usuario?> autenticar(String nome, String senha) async {
+    try {
+      final usuarios = await _repositorio.listarUsuarios();
 
-    // Caso especial: primeiro acesso
-    if (usuarios.isEmpty) {
-      return nome == 'admin' && senha == 'admin';
-    }
-
-    for (var usuario in usuarios) {
-      if (usuario.nome == nome && usuario.senha == senha) {
-        return true;
+      // Verifica se não há usuários cadastrados
+      if (usuarios.isEmpty) {
+        if (nome.trim() == 'admin' && senha.trim() == 'admin') {
+          return Usuario(
+            id: 0,
+            nome: 'admin',
+            senha: 'admin',
+            perfil: 'admin',
+          );
+        } else {
+          return null;
+        }
       }
-    }
 
-    return false;
+      // Verifica nos usuários cadastrados
+      for (var usuario in usuarios) {
+        if (usuario.nome == nome && usuario.senha == senha) {
+          return usuario;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      print('Erro na autenticação: $e');
+      return null;
+    }
   }
 }

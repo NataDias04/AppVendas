@@ -2,25 +2,31 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 class ArquivoHelper {
-  static Future<String> _getPath(String nomeArquivo) async {
-    final dir = await getApplicationDocumentsDirectory();
-    return '${dir.path}/$nomeArquivo';
+  static Future<String> _getCaminhoArquivo(String nomeArquivo) async {
+    final diretorio = await getApplicationDocumentsDirectory();
+    return '${diretorio.path}/$nomeArquivo';
   }
 
   static Future<String> lerArquivo(String nomeArquivo) async {
     try {
-      final path = await _getPath(nomeArquivo);
-      final arquivo = File(path);
+      final caminho = await _getCaminhoArquivo(nomeArquivo);
+      final arquivo = File(caminho);
       if (await arquivo.exists()) {
-        return await arquivo.readAsString();
+        return arquivo.readAsString();
       }
-    } catch (_) {}
+    } catch (e) {
+      print('Erro ao ler arquivo: $e');
+    }
     return '';
   }
 
   static Future<void> salvarArquivo(String nomeArquivo, String conteudo) async {
-    final path = await _getPath(nomeArquivo);
-    final arquivo = File(path);
-    await arquivo.writeAsString(conteudo);
+    try {
+      final caminho = await _getCaminhoArquivo(nomeArquivo);
+      final arquivo = File(caminho);
+      await arquivo.writeAsString(conteudo);
+    } catch (e) {
+      print('Erro ao salvar arquivo: $e');
+    }
   }
 }

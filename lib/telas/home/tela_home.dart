@@ -4,17 +4,25 @@ import '../../modelos/usuario.dart';
 class TelaHome extends StatelessWidget {
   final Usuario usuarioLogado;
 
-  TelaHome({super.key, required this.usuarioLogado});
+  const TelaHome({super.key, required this.usuarioLogado});
 
   @override
   Widget build(BuildContext context) {
-    print('Perfil do usuário logado: ${usuarioLogado.perfil}');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('Menu Principal'),
+        title: Text('Bem-vindo, ${usuarioLogado.nome}'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/');
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -23,24 +31,23 @@ class TelaHome extends StatelessWidget {
           mainAxisSpacing: 30,
           crossAxisSpacing: 30,
           children: [
-            if (usuarioLogado.perfil.toLowerCase() == 'admin') _iconeMenu(
-              context,
-              icon: Icons.person_add,
-              label: 'Usuários',
-              onTap: () {
-                Navigator.pushNamed(context, '/usuarios');
-              },
-            ),
+            // Só mostra o botão se o usuário for admin
+            if (usuarioLogado.perfil.toLowerCase() == 'admin')
+              _iconeMenu(
+                icon: Icons.person_add,
+                label: 'Usuários',
+                onTap: () {
+                  Navigator.pushNamed(context, '/usuarios');
+                },
+              ),
             _iconeMenu(
-              context,
               icon: Icons.people,
               label: 'Clientes',
               onTap: () {
-                // Adicionar lógica para clientes
+                // ação para clientes
               },
             ),
             _iconeMenu(
-              context,
               icon: Icons.inventory,
               label: 'Produtos',
               onTap: () {
@@ -53,8 +60,7 @@ class TelaHome extends StatelessWidget {
     );
   }
 
-  Widget _iconeMenu(
-    BuildContext context, {
+  Widget _iconeMenu({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
@@ -65,10 +71,10 @@ class TelaHome extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 60, color: Colors.blue),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             label,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),

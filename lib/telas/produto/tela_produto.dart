@@ -12,54 +12,71 @@ class TelaProduto extends StatefulWidget {
 class _TelaProdutoState extends State<TelaProduto> {
   final ProdutoController _controller = ProdutoController();
   final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _unidadeController = TextEditingController();
-  final TextEditingController _precoVendaController = TextEditingController();
-  final TextEditingController _qtdEstoqueController = TextEditingController();
-  final TextEditingController _codigoBarrasController = TextEditingController();
+  final TextEditingController _precoController = TextEditingController();
+  final TextEditingController _estoqueController = TextEditingController();
   final TextEditingController _custoController = TextEditingController();
-  int _statusSelecionado = 1;
+  final TextEditingController _codigoBarrasController = TextEditingController();
 
+  String? _erroNome;
+  String? _erroPreco;
+  String? _erroEstoque;
+  String? _erroCusto;
+  String? _erroCodigoBarras;
+
+  String _unidadeSelecionada = 'UN'; // unidade padrão
   Produto? _produtoEmEdicao;
   bool _modoEdicao = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _controller.carregarProdutos().then((_) => setState(() {}));
+  }
+
   void _limparCampos() {
     _nomeController.clear();
-    _unidadeController.clear();
-    _precoVendaController.clear();
-    _qtdEstoqueController.clear();
-    _codigoBarrasController.clear();
+    _precoController.clear();
+    _estoqueController.clear();
     _custoController.clear();
-    _statusSelecionado = 1;
+    _codigoBarrasController.clear();
+    _unidadeSelecionada = 'UN';
     _produtoEmEdicao = null;
     _modoEdicao = false;
+
+    _erroNome = null;
+    _erroPreco = null;
+    _erroEstoque = null;
+    _erroCusto = null;
+    _erroCodigoBarras = null;
+  }
+
+  bool _validarCampos() {
+    bool valido = true;
+
+    setState(() {
+      _erroNome = _nomeController.text.isEmpty ? 'Informe o nome do produto' : null;
+      _erroPreco = double.tryParse(_precoController.text) == null ? 'Preço inválido' : null;
+      _erroEstoque = int.tryParse(_estoqueController.text) == null ? 'Estoque inválido' : null;
+      _erroCusto = double.tryParse(_custoController.text) == null ? 'Custo inválido' : null;
+      _erroCodigoBarras = _codigoBarrasController.text.isEmpty ? 'Informe o código de barras' : null;
+
+      valido = [_erroNome, _erroPreco, _erroEstoque, _erroCusto, _erroCodigoBarras].every((e) => e == null);
+    });
+
+    return valido;
   }
 
   void _salvarProduto() async {
-    if (_nomeController.text.isEmpty ||
-        _unidadeController.text.isEmpty ||
-        _precoVendaController.text.isEmpty ||
-        _qtdEstoqueController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Preencha todos os campos obrigatórios')),
-      );
-      return;
-    }
-    final unidadesPermitidas = ['un', 'cx', 'kg', 'lt', 'ml'];
-    if (!unidadesPermitidas.contains(_unidadeController.text.toLowerCase())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unidade inválida! Use apenas: un, cx, kg, lt, ml')),
-      );
-      return;
-    }
+    if (!_validarCampos()) return;
 
     final produto = Produto(
       id: _produtoEmEdicao?.id ?? DateTime.now().millisecondsSinceEpoch,
       nome: _nomeController.text,
-      unidade: _unidadeController.text,
-      precoVenda: double.tryParse(_precoVendaController.text) ?? 0.0,
-      qtdEstoque: int.tryParse(_qtdEstoqueController.text) ?? 0,
-      custo: double.tryParse(_custoController.text) ?? 0.0,
-      status: _statusSelecionado,
+      unidade: _unidadeSelecionada,
+      qtdEstoque: int.parse(_estoqueController.text),
+      precoVenda: double.parse(_precoController.text),
+      status: 1,
+      custo: double.parse(_custoController.text),
       codigoBarras: _codigoBarrasController.text,
     );
 
@@ -73,10 +90,21 @@ class _TelaProdutoState extends State<TelaProduto> {
     setState(() {});
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _controller.carregarProdutos().then((_) => setState(() {}));
+  Widget _campoTexto(TextEditingController controller, String label, String? erro, {bool isNumber = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: controller,
+          keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+          decoration: InputDecoration(
+            labelText: label,
+            errorText: erro,
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
   }
 
   @override
@@ -90,37 +118,39 @@ class _TelaProdutoState extends State<TelaProduto> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _campoTexto(_nomeController, 'Nome *'),
-            _campoTexto(_unidadeController, 'Unidade *'),
-            _campoTexto(_precoVendaController, 'Preço de Venda *', isNumber: true),
-            _campoTexto(_qtdEstoqueController, 'Quantidade em Estoque *', isNumber: true),
-            _campoTexto(_codigoBarrasController, 'Código de Barras'),
-            _campoTexto(_custoController, 'Custo', isNumber: true),
-            DropdownButton<int>(
-              value: _statusSelecionado,
-              items: const [
-                DropdownMenuItem(value: 1, child: Text('Ativo')),
-                DropdownMenuItem(value: 0, child: Text('Inativo')),
-              ],
-              onChanged: (valor) {
+            _campoTexto(_nomeController, 'Nome *', _erroNome),
+            _campoTexto(_precoController, 'Preço de venda *', _erroPreco, isNumber: true),
+            _campoTexto(_estoqueController, 'Quantidade em estoque *', _erroEstoque, isNumber: true),
+            _campoTexto(_custoController, 'Custo *', _erroCusto, isNumber: true),
+            _campoTexto(_codigoBarrasController, 'Código de barras *', _erroCodigoBarras),
+
+            DropdownButton<String>(
+              value: _unidadeSelecionada,
+              onChanged: (String? nova) {
                 setState(() {
-                  _statusSelecionado = valor ?? 1;
+                  _unidadeSelecionada = nova!;
                 });
               },
+              items: ['UN', 'KG', 'L', 'M'].map((String unidade) {
+                return DropdownMenuItem<String>(
+                  value: unidade,
+                  child: Text(unidade),
+                );
+              }).toList(),
             ),
+
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _salvarProduto,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                     child: Text(_modoEdicao ? 'Salvar Alterações' : 'Cadastrar'),
                   ),
                 ),
-                if (_modoEdicao) const SizedBox(width: 10),
+                if (_modoEdicao)
+                  const SizedBox(width: 10),
                 if (_modoEdicao)
                   ElevatedButton(
                     onPressed: () {
@@ -141,7 +171,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                   return Card(
                     child: ListTile(
                       title: Text(produto.nome),
-                      subtitle: Text('Preço: R\$${produto.precoVenda.toStringAsFixed(2)} | Estoque: ${produto.qtdEstoque}'),
+                      subtitle: Text('R\$ ${produto.precoVenda.toStringAsFixed(2)} - ${produto.unidade}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -152,12 +182,11 @@ class _TelaProdutoState extends State<TelaProduto> {
                                 _produtoEmEdicao = produto;
                                 _modoEdicao = true;
                                 _nomeController.text = produto.nome;
-                                _unidadeController.text = produto.unidade;
-                                _precoVendaController.text = produto.precoVenda.toString();
-                                _qtdEstoqueController.text = produto.qtdEstoque.toString();
-                                _codigoBarrasController.text = produto.codigoBarras;
+                                _precoController.text = produto.precoVenda.toString();
+                                _estoqueController.text = produto.qtdEstoque.toString();
                                 _custoController.text = produto.custo.toString();
-                                _statusSelecionado = produto.status;
+                                _codigoBarrasController.text = produto.codigoBarras;
+                                _unidadeSelecionada = produto.unidade;
                               });
                             },
                           ),
@@ -178,14 +207,6 @@ class _TelaProdutoState extends State<TelaProduto> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _campoTexto(TextEditingController controller, String label, {bool isNumber = false}) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(labelText: label),
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
     );
   }
 }

@@ -1,28 +1,22 @@
 class Usuario {
-  int id;
-  String nome;
-  String email;
-  String senha;
-  String telefone;
-  String perfil;  // Usando String
+  final int id;
+  final String nome;
+  final String senha;
+  final String perfil;
 
   Usuario({
     required this.id,
     required this.nome,
-    required this.email,
     required this.senha,
-    required this.telefone,
-    required this.perfil,  // Usando String para perfil
+    required this.perfil,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
     return Usuario(
       id: json['id'],
       nome: json['nome'],
-      email: json['email'],
       senha: json['senha'],
-      telefone: json['telefone'],
-      perfil: json['perfil'],  // Deve ser String
+      perfil: json['perfil'],
     );
   }
 
@@ -30,10 +24,8 @@ class Usuario {
     return {
       'id': id,
       'nome': nome,
-      'email': email,
       'senha': senha,
-      'telefone': telefone,
-      'perfil': perfil,  // Deve ser String
+      'perfil': perfil,
     };
   }
 }

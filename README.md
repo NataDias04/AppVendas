@@ -19,7 +19,16 @@
 
 - ✅ Validação de campos obrigatórios
 
-🛠️ Tecnologias Utilizadas
+🛠️ Tecnologias Utilizadas:
+
 - Flutter (Dart)
 
-📸 Capturas de Tela
+📸 Capturas de Tela:
+
+- Login
+  
+- Usuarios
+  
+- Clientes
+  
+- Produtos

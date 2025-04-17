@@ -93,8 +93,8 @@ class _TelaUsuarioState extends State<TelaUsuario> {
             Text(
               _modoEdicao ? 'Editar Usuário' : 'Cadastro de Usuário',
               style: const TextStyle(
-                fontSize: 20, 
-                fontWeight: FontWeight.bold, 
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
@@ -102,69 +102,131 @@ class _TelaUsuarioState extends State<TelaUsuario> {
         ),
         backgroundColor: const Color(0xFF3E8EED),
       ),
-      body: Center(
-        child: Card(
-          elevation: 8,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  _campoTexto(
-                    controller: _nomeController,
-                    label: 'Nome *',
-                    validator: (value) =>
-                        value == null || value.trim().isEmpty ? 'Informe o nome' : null,
-                  ),
-                  const SizedBox(height: 12),
-                  _campoTexto(
-                    controller: _senhaController,
-                    label: 'Senha *',
-                    obscureText: true,
-                    validator: (value) =>
-                        value == null || value.length < 4 ? 'Senha muito curta' : null,
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<int>(
-                    value: _perfilSelecionado,
-                    decoration: const InputDecoration(labelText: 'Perfil'),
-                    items: const [
-                      DropdownMenuItem(value: 1, child: Text('Admin')),
-                      DropdownMenuItem(value: 0, child: Text('Comum')),
-                    ],
-                    onChanged: (valor) {
-                      setState(() {
-                        _perfilSelecionado = valor ?? 1;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _salvarUsuario,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3E8EED),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                      _campoTexto(
+                        controller: _nomeController,
+                        label: 'Nome *',
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty ? 'Informe o nome' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      _campoTexto(
+                        controller: _senhaController,
+                        label: 'Senha *',
+                        obscureText: true,
+                        validator: (value) =>
+                            value == null || value.length < 4 ? 'Senha muito curta' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<int>(
+                        value: _perfilSelecionado,
+                        decoration: const InputDecoration(labelText: 'Perfil'),
+                        items: const [
+                          DropdownMenuItem(value: 1, child: Text('Admin')),
+                          DropdownMenuItem(value: 0, child: Text('Comum')),
+                        ],
+                        onChanged: (valor) {
+                          setState(() {
+                            _perfilSelecionado = valor ?? 1;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _salvarUsuario,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF3E8EED),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                _modoEdicao ? 'Salvar Alterações' : 'Cadastrar',
+                                style: const TextStyle(fontSize: 16, color: Colors.white),
+                              ),
                             ),
                           ),
-                          child: Text(
-                            _modoEdicao ? 'Salvar Alterações' : 'Cadastrar',
-                            style: const TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
+                          if (_modoEdicao) const SizedBox(width: 10),
+                          if (_modoEdicao)
+                            ElevatedButton(
+                              onPressed: () {
+                                _limparCampos();
+                                setState(() {});
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text('Cancelar', style: TextStyle(color: Colors.white)),
+                            ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _controller.usuarios.length,
+                itemBuilder: (context, index) {
+                  final usuario = _controller.usuarios[index];
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: ListTile(
+                      title: Text(usuario.nome, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text(usuario.perfil),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Color(0xFF3E8EED)),
+                            onPressed: () {
+                              setState(() {
+                                _usuarioEmEdicao = usuario;
+                                _modoEdicao = true;
+                                _nomeController.text = usuario.nome;
+                                _senhaController.text = usuario.senha;
+                                _perfilSelecionado = usuario.perfil == 'Admin' ? 1 : 0;
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              await _controller.remover(usuario.id);
+                              setState(() {});
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

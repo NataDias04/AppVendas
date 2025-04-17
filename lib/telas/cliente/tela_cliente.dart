@@ -20,6 +20,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
   final TextEditingController _senhaController = TextEditingController();
 
   String _mensagemErro = '';
+  String _mensagemAcerto = '';
 
   bool _isCpfCnpjValido(String cpfCnpj) {
     return cpfCnpj.length == 11 || cpfCnpj.length == 14;
@@ -33,7 +34,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     return telefone.length == 11;
   }
 
-  void _cadastrarCliente() {
+ void _cadastrarCliente() {
     final nome = _nomeController.text;
     final cpfCnpj = _cpfCnpjController.text;
     final email = _emailController.text;
@@ -79,7 +80,19 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
       senha: senha,
     );
 
-    Navigator.pushReplacementNamed(context, '/');
+    setState(() {
+      _mensagemAcerto = 'Cliente cadastrado com sucesso!';
+    });
+
+    _nomeController.clear();
+    _cpfCnpjController.clear();
+    _emailController.clear();
+    _telefoneController.clear();
+    _enderecoController.clear();
+    _bairroController.clear();
+    _cidadeController.clear();
+    _ufController.clear();
+    _senhaController.clear();
   }
 
   @override
@@ -130,6 +143,14 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
               ),
             ),
           ),
+            if (_mensagemAcerto.isNotEmpty)
+              Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                _mensagemAcerto,
+                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              ),
+            ),
             if (_mensagemErro.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),

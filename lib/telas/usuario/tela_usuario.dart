@@ -91,9 +91,18 @@ class _TelaUsuarioState extends State<TelaUsuario> {
           },
           color: Colors.white,  // Cor do ícone "Voltar"
         ),
-        title: Text(
-          _modoEdicao ? 'Editar Usuário' : 'Cadastro de Usuário',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),  // Cor do título
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,  // Centraliza o título
+          children: [
+            Text(
+              _modoEdicao ? 'Editar Usuário' : 'Cadastro de Usuário',
+              style: const TextStyle(
+                fontSize: 20, 
+                fontWeight: FontWeight.bold, 
+                color: Colors.white,  // Cor do título
+              ),
+            ),
+          ],
         ),
         backgroundColor: const Color(0xFF3E8EED),
       ),

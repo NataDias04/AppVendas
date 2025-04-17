@@ -86,7 +86,12 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cadastro de Cliente'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,  // Centraliza o título
+          children: const [
+            Text('Cadastro de Cliente'),
+          ],
+        ),
         backgroundColor: Colors.blue,  // Cor azul no AppBar
         foregroundColor: Colors.white,
       ),

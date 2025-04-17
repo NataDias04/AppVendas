@@ -42,9 +42,14 @@ class _TelaLoginState extends State<TelaLogin> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-        'Login',
-        style: TextStyle(color: Colors.white), // Texto branco
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center, // Centraliza o título
+          children: const [
+            Text(
+              'Login',
+              style: TextStyle(color: Colors.white), // Texto branco
+            ),
+          ],
         ),
         backgroundColor: azulPrincipal,
       ),

@@ -114,7 +114,12 @@ class _TelaProdutoState extends State<TelaProduto> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_modoEdicao ? 'Editar Produto' : 'Cadastro de Produto'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,  // Centraliza o título
+          children: [
+            Text(_modoEdicao ? 'Editar Produto' : 'Cadastro de Produto'),
+          ],
+        ),
         backgroundColor: azul, // Cor azul diretamente no AppBar
         foregroundColor: Colors.white,
       ),

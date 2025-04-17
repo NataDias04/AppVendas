@@ -12,9 +12,14 @@ class TelaHome extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text(
-          'Bem-vindo, ${usuarioLogado.nome}',
-          style: const TextStyle(color: Colors.white), // Texto branco
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center, // Centraliza o título
+          children: [
+            Text(
+              'Bem-vindo, ${usuarioLogado.nome}',
+              style: const TextStyle(color: Colors.white), // Texto branco
+            ),
+          ],
         ),
         centerTitle: true,
         actions: [

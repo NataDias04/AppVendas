@@ -11,6 +11,14 @@ class Usuario {
     required this.perfil,
   });
 
+  bool get isAdmin => perfil.toLowerCase() == 'admin';
+
+  // Método para verificar se o usuário tem perfil comum
+  bool get isComum => perfil.toLowerCase() == 'comum';
+
+  // Método para verificar se o usuário tem perfil cliente
+  bool get isCliente => perfil.toLowerCase() == 'cliente';
+
   factory Usuario.fromJson(Map<String, dynamic> json) {
     return Usuario(
       id: json['id'],

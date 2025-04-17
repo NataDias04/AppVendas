@@ -40,6 +40,14 @@ class TelaHome extends StatelessWidget {
                   Navigator.pushNamed(context, '/usuarios');
                 },
               ),
+            if (usuarioLogado.perfil.toLowerCase() == 'admin')
+              _iconeMenu(
+                icon: Icons.add_business,
+                label: 'Cadastrar Cliente',
+                onTap: () {
+                  Navigator.pushNamed(context, '/cadastroCliente');
+                },
+              ),
             _iconeMenu(
               icon: Icons.people,
               label: 'Clientes',

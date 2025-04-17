@@ -24,6 +24,8 @@ class _TelaProdutoState extends State<TelaProduto> {
   String? _erroCodigoBarras;
 
   String _unidadeSelecionada = 'UN'; // unidade padrão
+  int _statusSelecionado = 0; // 0 = Ativo, 1 = Inativo
+
   Produto? _produtoEmEdicao;
   bool _modoEdicao = false;
 
@@ -40,6 +42,7 @@ class _TelaProdutoState extends State<TelaProduto> {
     _custoController.clear();
     _codigoBarrasController.clear();
     _unidadeSelecionada = 'UN';
+    _statusSelecionado = 0;
     _produtoEmEdicao = null;
     _modoEdicao = false;
 
@@ -75,7 +78,7 @@ class _TelaProdutoState extends State<TelaProduto> {
       unidade: _unidadeSelecionada,
       qtdEstoque: int.parse(_estoqueController.text),
       precoVenda: double.parse(_precoController.text),
-      status: 1,
+      status: _statusSelecionado,
       custo: double.parse(_custoController.text),
       codigoBarras: _codigoBarrasController.text,
     );
@@ -139,6 +142,19 @@ class _TelaProdutoState extends State<TelaProduto> {
               }).toList(),
             ),
 
+            DropdownButton<int>(
+              value: _statusSelecionado,
+              onChanged: (int? novoStatus) {
+                setState(() {
+                  _statusSelecionado = novoStatus!;
+                });
+              },
+              items: const [
+                DropdownMenuItem(value: 0, child: Text('Ativo')),
+                DropdownMenuItem(value: 1, child: Text('Inativo')),
+              ],
+            ),
+
             const SizedBox(height: 16),
             Row(
               children: [
@@ -149,8 +165,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                     child: Text(_modoEdicao ? 'Salvar Alterações' : 'Cadastrar'),
                   ),
                 ),
-                if (_modoEdicao)
-                  const SizedBox(width: 10),
+                if (_modoEdicao) const SizedBox(width: 10),
                 if (_modoEdicao)
                   ElevatedButton(
                     onPressed: () {
@@ -158,7 +173,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                       setState(() {});
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                    child: Text('Cancelar'),
+                    child: const Text('Cancelar'),
                   ),
               ],
             ),
@@ -171,12 +186,14 @@ class _TelaProdutoState extends State<TelaProduto> {
                   return Card(
                     child: ListTile(
                       title: Text(produto.nome),
-                      subtitle: Text('R\$ ${produto.precoVenda.toStringAsFixed(2)} - ${produto.unidade}'),
+                      subtitle: Text(
+                        'R\$ ${produto.precoVenda.toStringAsFixed(2)} - ${produto.unidade} - ${produto.status == 0 ? 'Ativo' : 'Inativo'}',
+                      ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit, color: Colors.blue),
+                            icon: const Icon(Icons.edit, color: Colors.blue),
                             onPressed: () {
                               setState(() {
                                 _produtoEmEdicao = produto;
@@ -187,11 +204,12 @@ class _TelaProdutoState extends State<TelaProduto> {
                                 _custoController.text = produto.custo.toString();
                                 _codigoBarrasController.text = produto.codigoBarras;
                                 _unidadeSelecionada = produto.unidade;
+                                _statusSelecionado = produto.status;
                               });
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () async {
                               await _controller.remover(produto.id);
                               setState(() {});

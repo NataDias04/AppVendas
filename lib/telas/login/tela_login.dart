@@ -21,10 +21,10 @@ class _TelaLoginState extends State<TelaLogin> {
     final senha = _senhaController.text;
 
     final usuarioLogado = await _loginController.autenticar(nome, senha);
-    
+
     if (usuarioLogado != null) {
       Navigator.pushReplacementNamed(
-        context, 
+        context,
         '/home',
         arguments: usuarioLogado,
       );
@@ -37,29 +37,91 @@ class _TelaLoginState extends State<TelaLogin> {
 
   @override
   Widget build(BuildContext context) {
+    final azulPrincipal = Colors.blue;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _nomeController,
-              decoration: InputDecoration(labelText: 'Nome de usuário'),
-            ),
-            TextField(
-              controller: _senhaController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Senha'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: _tentarLogin, child: Text('Entrar')),
-            if (_mensagemErro.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(_mensagemErro, style: TextStyle(color: Colors.red)),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+        'Login',
+        style: TextStyle(color: Colors.white), // Texto branco
+        ),
+        backgroundColor: azulPrincipal,
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.lock_outline, size: 80, color: Colors.blue),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _nomeController,
+                decoration: InputDecoration(
+                  labelText: 'Nome de usuário',
+                  labelStyle: const TextStyle(color: Colors.black),
+                  floatingLabelStyle: const TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: azulPrincipal),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
-          ],
+              const SizedBox(height: 16),
+              TextField(
+                controller: _senhaController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  labelStyle: const TextStyle(color: Colors.black),
+                  floatingLabelStyle: const TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: azulPrincipal),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _tentarLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: azulPrincipal,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'Entrar',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              if (_mensagemErro.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    _mensagemErro,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

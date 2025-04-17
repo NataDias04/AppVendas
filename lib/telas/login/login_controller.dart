@@ -8,7 +8,6 @@ class LoginController {
     try {
       final usuarios = await _repositorio.listarUsuarios();
 
-      // Verifica se não há usuários cadastrados
       if (usuarios.isEmpty) {
         if (nome.trim() == 'admin' && senha.trim() == 'admin') {
           return Usuario(
@@ -22,7 +21,6 @@ class LoginController {
         }
       }
 
-      // Verifica nos usuários cadastrados
       for (var usuario in usuarios) {
         if (usuario.nome == nome && usuario.senha == senha) {
           return usuario;

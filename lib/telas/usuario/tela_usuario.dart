@@ -14,14 +14,13 @@ class _TelaUsuarioState extends State<TelaUsuario> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _telefoneController = TextEditingController();
-  int _perfilSelecionado = 1; // 1 para Admin, 0 para Comum
+  int _perfilSelecionado = 1;
 
   Usuario? _usuarioEmEdicao;
   bool _modoEdicao = false;
 
+  // Função para salvar o usuário
   void _salvarUsuario() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -45,6 +44,7 @@ class _TelaUsuarioState extends State<TelaUsuario> {
     );
   }
 
+  // Função para limpar os campos de entrada
   void _limparCampos() {
     _nomeController.clear();
     _senhaController.clear();
@@ -53,24 +53,57 @@ class _TelaUsuarioState extends State<TelaUsuario> {
     _modoEdicao = false;
   }
 
+  // Carregar os usuários ao iniciar a tela
   @override
   void initState() {
     super.initState();
     _controller.carregarUsuarios().then((_) => setState(() {}));
   }
 
+  // Função para exibir os campos de texto com validação
+  Widget _campoTexto({
+    required TextEditingController controller,
+    required String label,
+    required String? Function(String?) validator,
+    bool obscureText = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      validator: validator,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_modoEdicao ? 'Editar Usuário' : 'Cadastro de Usuário'),
-        backgroundColor: Colors.blue,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.white,  // Cor do ícone "Voltar"
+        ),
+        title: Text(
+          _modoEdicao ? 'Editar Usuário' : 'Cadastro de Usuário',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),  // Cor do título
+        ),
+        backgroundColor: const Color(0xFF3E8EED),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Form(
+      body: Center(
+        child: Card(
+          elevation: 8,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Form(
               key: _formKey,
               child: Column(
                 children: [
@@ -80,6 +113,7 @@ class _TelaUsuarioState extends State<TelaUsuario> {
                     validator: (value) =>
                         value == null || value.trim().isEmpty ? 'Informe o nome' : null,
                   ),
+                  const SizedBox(height: 12),
                   _campoTexto(
                     controller: _senhaController,
                     label: 'Senha *',
@@ -87,6 +121,7 @@ class _TelaUsuarioState extends State<TelaUsuario> {
                     validator: (value) =>
                         value == null || value.length < 4 ? 'Senha muito curta' : null,
                   ),
+                  const SizedBox(height: 12),
                   DropdownButtonFormField<int>(
                     value: _perfilSelecionado,
                     decoration: const InputDecoration(labelText: 'Perfil'),
@@ -100,88 +135,33 @@ class _TelaUsuarioState extends State<TelaUsuario> {
                       });
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _salvarUsuario,
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                          child: Text(_modoEdicao ? 'Salvar Alterações' : 'Cadastrar'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF3E8EED),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            _modoEdicao ? 'Salvar Alterações' : 'Cadastrar',
+                            style: const TextStyle(fontSize: 16, color: Colors.white),
+                          ),
                         ),
                       ),
-                      if (_modoEdicao) const SizedBox(width: 10),
-                      if (_modoEdicao)
-                        ElevatedButton(
-                          onPressed: () {
-                            _limparCampos();
-                            setState(() {});
-                          },
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                          child: const Text('Cancelar'),
-                        ),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _controller.usuarios.length,
-                itemBuilder: (context, index) {
-                  final usuario = _controller.usuarios[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text(usuario.nome),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              setState(() {
-                                _usuarioEmEdicao = usuario;
-                                _modoEdicao = true;
-                                _nomeController.text = usuario.nome;
-                                _senhaController.text = usuario.senha;
-                                _perfilSelecionado = usuario.perfil == 'Admin' ? 1 : 0;
-                              });
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () async {
-                              await _controller.remover(usuario.id);
-                              setState(() {});
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ),
-    );
-  }
-
-  Widget _campoTexto({
-    required TextEditingController controller,
-    required String label,
-    bool obscureText = false,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(labelText: label),
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
     );
   }
 }

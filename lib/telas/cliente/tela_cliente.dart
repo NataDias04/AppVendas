@@ -22,18 +22,14 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
   String _mensagemErro = '';
 
   bool _isCpfCnpjValido(String cpfCnpj) {
-    // Adicione a lógica para validar o CPF ou CNPJ aqui
-    // Exemplo básico de validação (simplesmente verifica se o tamanho é 11 ou 14 caracteres):
     return cpfCnpj.length == 11 || cpfCnpj.length == 14;
   }
 
   bool _isEmailValido(String email) {
-    // Verificação simples para email
     return email.contains('@');
   }
 
   bool _isTelefoneValido(String telefone) {
-    // Verificação simples para telefone (exemplo: tamanho 11)
     return telefone.length == 11;
   }
 
@@ -77,47 +73,96 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     }
 
     final novoUsuario = Usuario(
-      id: DateTime.now().millisecondsSinceEpoch,  // Gerando ID único
+      id: DateTime.now().millisecondsSinceEpoch, 
       nome: nome,
-      perfil: 'comum', // Usuário comum por padrão
+      perfil: 'comum',
       senha: senha,
     );
 
-    // Aqui você pode salvar o cliente no banco de dados ou em um arquivo, conforme necessário.
-    // Exemplo de navegação após cadastro:
     Navigator.pushReplacementNamed(context, '/');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cadastro de Cliente')),
-      body: Padding(
+      appBar: AppBar(
+        title: const Text('Cadastro de Cliente'),
+        backgroundColor: Colors.blue,  // Cor azul no AppBar
+        foregroundColor: Colors.white,
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(controller: _nomeController, decoration: const InputDecoration(labelText: 'Nome')),
-            TextField(controller: _cpfCnpjController, decoration: const InputDecoration(labelText: 'CPF/CNPJ')),
-            TextField(controller: _emailController, decoration: const InputDecoration(labelText: 'E-mail')),
-            TextField(controller: _telefoneController, decoration: const InputDecoration(labelText: 'Telefone')),
-            TextField(controller: _enderecoController, decoration: const InputDecoration(labelText: 'Endereço')),
-            TextField(controller: _bairroController, decoration: const InputDecoration(labelText: 'Bairro')),
-            TextField(controller: _cidadeController, decoration: const InputDecoration(labelText: 'Cidade')),
-            TextField(controller: _ufController, decoration: const InputDecoration(labelText: 'UF')),
-            TextField(controller: _senhaController, obscureText: true, decoration: const InputDecoration(labelText: 'Senha')),
+            // Caixa de texto com estilo
+            _campoTexto(_nomeController, 'Nome', obrigatorio: true),
+            _campoTexto(_cpfCnpjController, 'CPF/CNPJ', obrigatorio: true),
+            _campoTexto(_emailController, 'E-mail', obrigatorio: true),
+            _campoTexto(_telefoneController, 'Telefone', obrigatorio: true),
+            _campoTexto(_enderecoController, 'Endereço'),
+            _campoTexto(_bairroController, 'Bairro'),
+            _campoTexto(_cidadeController, 'Cidade'),
+            _campoTexto(_ufController, 'UF'),
+            _campoTexto(_senhaController, 'Senha', obscure: true, obrigatorio: true),
 
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _cadastrarCliente,
-              child: const Text('Cadastrar'),
+            // Botão centralizado e com largura aumentada
+           Center(
+            child: SizedBox(
+              width: double.infinity,  // Aumenta a largura do botão
+              child: ElevatedButton(
+                onPressed: _cadastrarCliente,
+                child: const Text(
+                  'Cadastrar',
+                  style: TextStyle(color: Colors.white),  // Definindo a cor do texto como branco
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,  // Cor de fundo do botão
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
             ),
+          ),
+            // Mensagem de erro
             if (_mensagemErro.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
-                child: Text(_mensagemErro, style: TextStyle(color: Colors.red)),
+                child: Text(
+                  _mensagemErro,
+                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // Função auxiliar para criar campos de texto com estilo
+  Widget _campoTexto(TextEditingController controller, String label, {bool obscure = false, bool obrigatorio = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscure,
+        decoration: InputDecoration(
+          labelText: '$label${obrigatorio ? " *" : ""}',  // Adiciona o asterisco se for obrigatório
+          labelStyle: TextStyle(color: Colors.grey[700]),
+          filled: true,
+          fillColor: Colors.white,  // Fundo branco nos campos de texto
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue, width: 2),
+          ),
+          errorStyle: const TextStyle(color: Colors.red),
         ),
       ),
     );

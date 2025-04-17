@@ -3,7 +3,7 @@ import 'telas/login/tela_login.dart';
 import 'telas/home/tela_home.dart';
 import 'telas/produto/tela_produto.dart';
 import 'telas/usuario/tela_usuario.dart';
-import 'telas/cliente/tela_cliente.dart';  // Importando a nova tela de cadastro de cliente
+import 'telas/cliente/tela_cliente.dart';
 import 'modelos/usuario.dart';
 
 void main() {
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         },
         '/cadastroProduto': (context) => const TelaProduto(),
         '/usuarios': (context) => const TelaUsuario(),
-        '/cadastroCliente': (context) => const TelaCadastroCliente(), // Adicionando a rota para cadastro de cliente
+        '/cadastroCliente': (context) => const TelaCadastroCliente(),
       },
     );
   }

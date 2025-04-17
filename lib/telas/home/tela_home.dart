@@ -12,11 +12,17 @@ class TelaHome extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('Bem-vindo, ${usuarioLogado.nome}'),
+        title: Text(
+          'Bem-vindo, ${usuarioLogado.nome}',
+          style: const TextStyle(color: Colors.white), // Texto branco
+        ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white, // Ícone branco
+            ),
             tooltip: 'Sair',
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/');

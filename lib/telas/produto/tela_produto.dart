@@ -98,10 +98,10 @@ class _TelaProdutoState extends State<TelaProduto> {
       controller: controller,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       decoration: InputDecoration(
-        labelText: '$label *', // Adicionando o asterisco ao lado do rótulo
+        labelText: '$label *',
         errorText: erro,
         filled: true,
-        fillColor: Colors.white,  // Cor de fundo branca
+        fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
@@ -109,18 +109,17 @@ class _TelaProdutoState extends State<TelaProduto> {
 
   @override
   Widget build(BuildContext context) {
-    // Definindo a cor azul diretamente
     Color azul = Colors.blue;
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,  // Centraliza o título
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(_modoEdicao ? 'Editar Produto' : 'Cadastro de Produto'),
           ],
         ),
-        backgroundColor: azul, // Cor azul diretamente no AppBar
+        backgroundColor: azul,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -144,7 +143,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                 labelText: 'Unidade',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true,
-                fillColor: Colors.white,  // Cor de fundo branca
+                fillColor: Colors.white,
               ),
               onChanged: (String? nova) {
                 setState(() {
@@ -163,7 +162,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                 labelText: 'Status',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true,
-                fillColor: Colors.white,  // Cor de fundo branca
+                fillColor: Colors.white,
               ),
               onChanged: (int? novoStatus) {
                 setState(() {
@@ -185,7 +184,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                     icon: const Icon(Icons.check),
                     label: Text(_modoEdicao ? 'Salvar Alterações' : 'Cadastrar'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: azul, // Cor azul no botão
+                      backgroundColor: azul,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -233,7 +232,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.edit, color: azul), // Cor azul no ícone de editar
+                          icon: Icon(Icons.edit, color: azul),
                           onPressed: () {
                             setState(() {
                               _produtoEmEdicao = produto;

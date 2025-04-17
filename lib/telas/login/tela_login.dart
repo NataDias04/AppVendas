@@ -43,11 +43,11 @@ class _TelaLoginState extends State<TelaLogin> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Centraliza o título
+          mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Text(
               'Login',
-              style: TextStyle(color: Colors.white), // Texto branco
+              style: TextStyle(color: Colors.white),
             ),
           ],
         ),

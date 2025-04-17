@@ -20,7 +20,6 @@ class _TelaUsuarioState extends State<TelaUsuario> {
   Usuario? _usuarioEmEdicao;
   bool _modoEdicao = false;
 
-  // Função para salvar o usuário
   void _salvarUsuario() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -44,7 +43,6 @@ class _TelaUsuarioState extends State<TelaUsuario> {
     );
   }
 
-  // Função para limpar os campos de entrada
   void _limparCampos() {
     _nomeController.clear();
     _senhaController.clear();
@@ -53,14 +51,12 @@ class _TelaUsuarioState extends State<TelaUsuario> {
     _modoEdicao = false;
   }
 
-  // Carregar os usuários ao iniciar a tela
   @override
   void initState() {
     super.initState();
     _controller.carregarUsuarios().then((_) => setState(() {}));
   }
 
-  // Função para exibir os campos de texto com validação
   Widget _campoTexto({
     required TextEditingController controller,
     required String label,
@@ -89,17 +85,17 @@ class _TelaUsuarioState extends State<TelaUsuario> {
           onPressed: () {
             Navigator.pop(context);
           },
-          color: Colors.white,  // Cor do ícone "Voltar"
+          color: Colors.white,
         ),
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,  // Centraliza o título
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               _modoEdicao ? 'Editar Usuário' : 'Cadastro de Usuário',
               style: const TextStyle(
                 fontSize: 20, 
                 fontWeight: FontWeight.bold, 
-                color: Colors.white,  // Cor do título
+                color: Colors.white,
               ),
             ),
           ],

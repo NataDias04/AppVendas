@@ -87,12 +87,12 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,  // Centraliza o título
+          mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Text('Cadastro de Cliente'),
           ],
         ),
-        backgroundColor: Colors.blue,  // Cor azul no AppBar
+        backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -100,7 +100,6 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Caixa de texto com estilo
             _campoTexto(_nomeController, 'Nome', obrigatorio: true),
             _campoTexto(_cpfCnpjController, 'CPF/CNPJ', obrigatorio: true),
             _campoTexto(_emailController, 'E-mail', obrigatorio: true),
@@ -112,18 +111,17 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
             _campoTexto(_senhaController, 'Senha', obscure: true, obrigatorio: true),
 
             const SizedBox(height: 20),
-            // Botão centralizado e com largura aumentada
            Center(
             child: SizedBox(
-              width: double.infinity,  // Aumenta a largura do botão
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: _cadastrarCliente,
                 child: const Text(
                   'Cadastrar',
-                  style: TextStyle(color: Colors.white),  // Definindo a cor do texto como branco
+                  style: TextStyle(color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,  // Cor de fundo do botão
+                  backgroundColor: Colors.blue,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -132,7 +130,6 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
               ),
             ),
           ),
-            // Mensagem de erro
             if (_mensagemErro.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -147,7 +144,6 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     );
   }
 
-  // Função auxiliar para criar campos de texto com estilo
   Widget _campoTexto(TextEditingController controller, String label, {bool obscure = false, bool obrigatorio = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -155,10 +151,10 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
         controller: controller,
         obscureText: obscure,
         decoration: InputDecoration(
-          labelText: '$label${obrigatorio ? " *" : ""}',  // Adiciona o asterisco se for obrigatório
+          labelText: '$label${obrigatorio ? " *" : ""}',
           labelStyle: TextStyle(color: Colors.grey[700]),
           filled: true,
-          fillColor: Colors.white,  // Fundo branco nos campos de texto
+          fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,

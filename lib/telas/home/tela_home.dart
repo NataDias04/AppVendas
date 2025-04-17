@@ -13,11 +13,11 @@ class TelaHome extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Centraliza o título
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               'Bem-vindo, ${usuarioLogado.nome}',
-              style: const TextStyle(color: Colors.white), // Texto branco
+              style: const TextStyle(color: Colors.white),
             ),
           ],
         ),
@@ -26,7 +26,7 @@ class TelaHome extends StatelessWidget {
           IconButton(
             icon: const Icon(
               Icons.logout,
-              color: Colors.white, // Ícone branco
+              color: Colors.white,
             ),
             tooltip: 'Sair',
             onPressed: () {
@@ -42,7 +42,6 @@ class TelaHome extends StatelessWidget {
           mainAxisSpacing: 30,
           crossAxisSpacing: 30,
           children: [
-            // Só mostra o botão se o usuário for admin
             if (usuarioLogado.perfil.toLowerCase() == 'admin')
               _iconeMenu(
                 icon: Icons.person_add,
@@ -63,7 +62,6 @@ class TelaHome extends StatelessWidget {
               icon: Icons.people,
               label: 'Clientes',
               onTap: () {
-                // ação para clientes
               },
             ),
             _iconeMenu(

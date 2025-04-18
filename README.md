@@ -38,3 +38,6 @@
 ![Image](https://github.com/user-attachments/assets/bbe78a0e-1531-4409-b334-791289968ce7)
 
 - Produtos
+
+![Image](https://github.com/user-attachments/assets/6d6f2840-2a14-433c-8d6c-55b3ef82252c)
+  

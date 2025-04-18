@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../modelos/usuario.dart';
+import '../../modelos/cliente.dart';
 
 class TelaCadastroCliente extends StatefulWidget {
   const TelaCadastroCliente({super.key});
@@ -13,6 +13,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
   final TextEditingController _cpfCnpjController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
+  final TextEditingController _cepController = TextEditingController();
   final TextEditingController _enderecoController = TextEditingController();
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _cidadeController = TextEditingController();
@@ -34,18 +35,19 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     return telefone.length == 11;
   }
 
- void _cadastrarCliente() {
+  void _cadastrarCliente() {
     final nome = _nomeController.text;
     final cpfCnpj = _cpfCnpjController.text;
     final email = _emailController.text;
     final telefone = _telefoneController.text;
+    final cep = _cepController.text;
     final endereco = _enderecoController.text;
     final bairro = _bairroController.text;
     final cidade = _cidadeController.text;
     final uf = _ufController.text;
     final senha = _senhaController.text;
 
-    if (nome.isEmpty || cpfCnpj.isEmpty || email.isEmpty || telefone.isEmpty || senha.isEmpty) {
+    if (nome.isEmpty || cpfCnpj.isEmpty || email.isEmpty || telefone.isEmpty || cep.isEmpty || endereco.isEmpty || bairro.isEmpty || cidade.isEmpty || uf.isEmpty || senha.isEmpty) {
       setState(() {
         _mensagemErro = 'Todos os campos obrigatórios devem ser preenchidos.';
       });
@@ -73,11 +75,18 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
       return;
     }
 
-    final novoUsuario = Usuario(
+    final novoCliente = Cliente(
       id: DateTime.now().millisecondsSinceEpoch, 
       nome: nome,
-      perfil: 'comum',
-      senha: senha,
+      tipo: 'comum', // O tipo pode ser definido de acordo com a lógica do seu app, como 'comum', 'empresa', etc.
+      cpfCnpj: cpfCnpj,
+      email: email,
+      telefone: telefone,
+      cep: cep,
+      endereco: endereco,
+      bairro: bairro,
+      cidade: cidade,
+      uf: uf,
     );
 
     setState(() {
@@ -88,6 +97,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     _cpfCnpjController.clear();
     _emailController.clear();
     _telefoneController.clear();
+    _cepController.clear();
     _enderecoController.clear();
     _bairroController.clear();
     _cidadeController.clear();
@@ -117,40 +127,41 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
             _campoTexto(_cpfCnpjController, 'CPF/CNPJ', obrigatorio: true),
             _campoTexto(_emailController, 'E-mail', obrigatorio: true),
             _campoTexto(_telefoneController, 'Telefone', obrigatorio: true),
-            _campoTexto(_enderecoController, 'Endereço'),
-            _campoTexto(_bairroController, 'Bairro'),
-            _campoTexto(_cidadeController, 'Cidade'),
-            _campoTexto(_ufController, 'UF'),
+            _campoTexto(_cepController, 'CEP', obrigatorio: true),
+            _campoTexto(_enderecoController, 'Endereço', obrigatorio: true),
+            _campoTexto(_bairroController, 'Bairro', obrigatorio: true),
+            _campoTexto(_cidadeController, 'Cidade', obrigatorio: true),
+            _campoTexto(_ufController, 'UF', obrigatorio: true),
             _campoTexto(_senhaController, 'Senha', obscure: true, obrigatorio: true),
 
             const SizedBox(height: 20),
-           Center(
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _cadastrarCliente,
-                child: const Text(
-                  'Cadastrar',
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+            Center(
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _cadastrarCliente,
+                  child: const Text(
+                    'Cadastrar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
             if (_mensagemAcerto.isNotEmpty)
               Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text(
-                _mensagemAcerto,
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  _mensagemAcerto,
+                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
             if (_mensagemErro.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../modelos/cliente.dart';
+import 'cliente_controller.dart';
 
 class TelaCadastroCliente extends StatefulWidget {
   const TelaCadastroCliente({super.key});
@@ -18,10 +19,11 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _cidadeController = TextEditingController();
   final TextEditingController _ufController = TextEditingController();
-  final TextEditingController _senhaController = TextEditingController();
 
   String _mensagemErro = '';
   String _mensagemAcerto = '';
+
+  final ClienteController _clienteController = ClienteController();
 
   bool _isCpfCnpjValido(String cpfCnpj) {
     return cpfCnpj.length == 11 || cpfCnpj.length == 14;
@@ -35,7 +37,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     return telefone.length == 11;
   }
 
-  void _cadastrarCliente() {
+  void _cadastrarCliente() async {
     final nome = _nomeController.text;
     final cpfCnpj = _cpfCnpjController.text;
     final email = _emailController.text;
@@ -45,9 +47,8 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     final bairro = _bairroController.text;
     final cidade = _cidadeController.text;
     final uf = _ufController.text;
-    final senha = _senhaController.text;
 
-    if (nome.isEmpty || cpfCnpj.isEmpty || email.isEmpty || telefone.isEmpty || cep.isEmpty || endereco.isEmpty || bairro.isEmpty || cidade.isEmpty || uf.isEmpty || senha.isEmpty) {
+    if (nome.isEmpty || cpfCnpj.isEmpty || email.isEmpty || telefone.isEmpty || cep.isEmpty || endereco.isEmpty || bairro.isEmpty || cidade.isEmpty || uf.isEmpty) {
       setState(() {
         _mensagemErro = 'Todos os campos obrigatórios devem ser preenchidos.';
       });
@@ -78,7 +79,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     final novoCliente = Cliente(
       id: DateTime.now().millisecondsSinceEpoch, 
       nome: nome,
-      tipo: 'comum', // O tipo pode ser definido de acordo com a lógica do seu app, como 'comum', 'empresa', etc.
+      tipo: 'comum',
       cpfCnpj: cpfCnpj,
       email: email,
       telefone: telefone,
@@ -89,8 +90,12 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
       uf: uf,
     );
 
+    
+    await _clienteController.adicionar(novoCliente); 
+
     setState(() {
       _mensagemAcerto = 'Cliente cadastrado com sucesso!';
+      _mensagemErro = '';
     });
 
     _nomeController.clear();
@@ -102,7 +107,6 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     _bairroController.clear();
     _cidadeController.clear();
     _ufController.clear();
-    _senhaController.clear();
   }
 
   @override
@@ -132,7 +136,6 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
             _campoTexto(_bairroController, 'Bairro', obrigatorio: true),
             _campoTexto(_cidadeController, 'Cidade', obrigatorio: true),
             _campoTexto(_ufController, 'UF', obrigatorio: true),
-            _campoTexto(_senhaController, 'Senha', obscure: true, obrigatorio: true),
 
             const SizedBox(height: 20),
             Center(

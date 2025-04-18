@@ -6,9 +6,7 @@ class ClienteController {
   final String _nomeArquivo = 'clientes.json';
   List<Cliente> clientes = [];
 
-  ClienteController() {
-    carregarClientes();
-  }
+  ClienteController();
 
   Future<void> carregarClientes() async {
     try {
@@ -25,6 +23,7 @@ class ClienteController {
   Future<void> salvarClientes() async {
     try {
       final jsonData = jsonEncode(clientes.map((c) => c.toJson()).toList());
+      print('Salvando JSON: $jsonData');
       await ArquivoHelper.salvarArquivo(_nomeArquivo, jsonData);
     } catch (e) {
       print('Erro ao salvar clientes: $e');
@@ -32,6 +31,7 @@ class ClienteController {
   }
 
   Future<void> adicionar(Cliente cliente) async {
+    await carregarClientes();
     clientes.add(cliente);
     await salvarClientes();
   }

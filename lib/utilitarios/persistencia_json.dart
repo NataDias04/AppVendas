@@ -8,17 +8,21 @@ class ArquivoHelper {
   }
 
   static Future<String> lerArquivo(String nomeArquivo) async {
-    try {
-      final caminho = await _getCaminhoArquivo(nomeArquivo);
-      final arquivo = File(caminho);
-      if (await arquivo.exists()) {
-        return arquivo.readAsString();
-      }
-    } catch (e) {
-      print('Erro ao ler arquivo: $e');
+  try {
+    final caminho = await _getCaminhoArquivo(nomeArquivo);
+    final arquivo = File(caminho);
+
+    if (!(await arquivo.exists())) {
+      // Cria o arquivo com uma lista vazia
+      await arquivo.writeAsString('[]');
     }
+
+    return await arquivo.readAsString();
+  } catch (e) {
+    print('Erro ao ler arquivo: $e');
     return '';
   }
+}
 
   static Future<void> salvarArquivo(String nomeArquivo, String conteudo) async {
     try {

@@ -62,6 +62,7 @@ class TelaHome extends StatelessWidget {
               icon: Icons.people,
               label: 'Clientes',
               onTap: () {
+                Navigator.pushNamed(context, '/visualizarcliente');
               },
             ),
             _iconeMenu(

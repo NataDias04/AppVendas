@@ -31,6 +31,8 @@
   
 - Usuarios
   
+![Image](https://github.com/user-attachments/assets/55c61b2c-9da7-4e28-a1ab-eefb22986bbd)
+
 - Clientes
   
 - Produtos

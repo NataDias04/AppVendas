@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../modelos/usuario.dart';
+import 'package:seu_app/telas/pedido/tela_lista_pedidos.dart';
+import 'package:seu_app/telas/pedido/tela_pedido.dart';
 
 class TelaHome extends StatelessWidget {
   final Usuario usuarioLogado;
@@ -72,6 +74,33 @@ class TelaHome extends StatelessWidget {
                 Navigator.pushNamed(context, '/cadastroProduto');
               },
             ),
+
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add_shopping_cart),
+              label: const Text('Cadastrar Pedido'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TelaCadastroPedido(),
+                  ),
+                );
+              },
+            ),
+
+            // ✅ Botão Listar Pedidos
+            ElevatedButton.icon(
+              icon: const Icon(Icons.receipt_long),
+              label: const Text('Pedidos'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TelaListaPedidos(),
+                  ),
+                );
+              },
+            )
           ],
         ),
       ),

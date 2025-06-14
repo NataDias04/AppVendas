@@ -3,6 +3,7 @@ import '../../modelos/pedido.dart';
 import '../../modelos/pedido_item.dart';
 import '../../modelos/pedido_pagamento.dart';
 import '../../modelos/produto.dart';
+import '../../telas/produto/produto_controller.dart';
 import 'pedido_controller.dart';
 
 class TelaCadastroPedido extends StatefulWidget {
@@ -14,12 +15,19 @@ class TelaCadastroPedido extends StatefulWidget {
 
 class _TelaCadastroPedidoState extends State<TelaCadastroPedido> {
   final PedidoController _pedidoController = PedidoController();
+  final ProdutoController _produtoController = ProdutoController();
+
   final List<PedidoItem> _itens = [];
   final List<PedidoPagamento> _pagamentos = [];
 
+  final TextEditingController _quantidadeController = TextEditingController();
+  final TextEditingController _valorPagamentoController = TextEditingController();
+
+  Produto? _produtoSelecionado;
+
   int _idPedido = DateTime.now().millisecondsSinceEpoch;
-  int _idCliente = 0; // Você pode adicionar dropdown de clientes se desejar
-  int _idUsuario = 1; // Suponha que o usuário logado tenha ID 1
+  int _idCliente = 0;
+  int _idUsuario = 1;
   String _mensagemErro = '';
 
   double get totalItens =>
@@ -28,9 +36,46 @@ class _TelaCadastroPedidoState extends State<TelaCadastroPedido> {
   double get totalPagamentos =>
       _pagamentos.fold(0.0, (total, pag) => total + pag.valorPagamento);
 
-  void _adicionarItem(PedidoItem item) {
+  @override
+  void initState() {
+    super.initState();
+    _carregarProdutos();
+  }
+
+  Future<void> _carregarProdutos() async {
+    await _produtoController.carregarProdutos();
+    setState(() {}); // Atualiza UI após o carregamento
+  }
+
+  void _adicionarItem() {
+    if (_produtoSelecionado == null) {
+      setState(() {
+        _mensagemErro = 'Selecione um produto.';
+      });
+      return;
+    }
+
+    final quantidade = double.tryParse(_quantidadeController.text);
+    if (quantidade == null || quantidade <= 0) {
+      setState(() {
+        _mensagemErro = 'Informe uma quantidade válida.';
+      });
+      return;
+    }
+
+    final totalItem = quantidade * _produtoSelecionado!.precoVenda;
+
     setState(() {
-      _itens.add(item);
+      _mensagemErro = '';
+      _itens.add(PedidoItem(
+        idPedido: _idPedido,
+        id: DateTime.now().millisecondsSinceEpoch,
+        idProduto: _produtoSelecionado!.id,
+        quantidade: quantidade,
+        totalItem: totalItem,
+      ));
+      _quantidadeController.clear();
+      _produtoSelecionado = null;
     });
   }
 
@@ -40,9 +85,24 @@ class _TelaCadastroPedidoState extends State<TelaCadastroPedido> {
     });
   }
 
-  void _adicionarPagamento(PedidoPagamento pagamento) {
+  void _adicionarPagamento() {
+    final valor = double.tryParse(_valorPagamentoController.text);
+
+    if (valor == null || valor <= 0) {
+      setState(() {
+        _mensagemErro = 'Informe um valor de pagamento válido.';
+      });
+      return;
+    }
+
     setState(() {
-      _pagamentos.add(pagamento);
+      _mensagemErro = '';
+      _pagamentos.add(PedidoPagamento(
+        idPedido: _idPedido,
+        id: DateTime.now().millisecondsSinceEpoch,
+        valorPagamento: valor,
+      ));
+      _valorPagamentoController.clear();
     });
   }
 
@@ -80,12 +140,14 @@ class _TelaCadastroPedidoState extends State<TelaCadastroPedido> {
 
     await _pedidoController.adicionar(pedido);
     if (context.mounted) {
-      Navigator.pop(context); // Volta para a home
+      Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final produtos = _produtoController.produtos;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de Pedido'),
@@ -100,26 +162,43 @@ class _TelaCadastroPedidoState extends State<TelaCadastroPedido> {
               child: ListView(
                 children: [
                   const Text('Itens do Pedido', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ..._itens.map((item) => ListTile(
-                        title: Text('Produto ID: ${item.idProduto}'),
-                        subtitle: Text('Qtd: ${item.quantidade}, Total: R\$ ${item.totalItem.toStringAsFixed(2)}'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _removerItem(item.id),
-                        ),
-                      )),
-                  ElevatedButton(
-                    onPressed: () {
-                      _adicionarItem(
-                        PedidoItem(
-                          idPedido: _idPedido,
-                          id: DateTime.now().millisecondsSinceEpoch,
-                          idProduto: 1,
-                          quantidade: 2,
-                          totalItem: 20.0, // Exemplo fixo
-                        ),
+                  ..._itens.map((item) {
+                    final produto = produtos.firstWhere(
+                      (p) => p.id == item.idProduto,
+                      orElse: () => Produto(id: 0, nome: 'Desconhecido', precoVenda: 0, unidade: 'Kg', qtdEstoque: 0, status: 0),
+                    );
+                    return ListTile(
+                      title: Text('Produto: ${produto.nome}'),
+                      subtitle: Text('Qtd: ${item.quantidade}, Total: R\$ ${item.totalItem.toStringAsFixed(2)}'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _removerItem(item.id),
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<Produto>(
+                    value: _produtoSelecionado,
+                    items: produtos.map((produto) {
+                      return DropdownMenuItem(
+                        value: produto,
+                        child: Text('${produto.nome} (R\$ ${produto.precoVenda.toStringAsFixed(2)})'),
                       );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _produtoSelecionado = value;
+                      });
                     },
+                    decoration: const InputDecoration(labelText: 'Produto'),
+                  ),
+                  TextField(
+                    controller: _quantidadeController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Quantidade'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _adicionarItem,
                     child: const Text('Adicionar Item'),
                   ),
                   const SizedBox(height: 20),
@@ -131,16 +210,13 @@ class _TelaCadastroPedidoState extends State<TelaCadastroPedido> {
                           onPressed: () => _removerPagamento(pagamento.id),
                         ),
                       )),
+                  TextField(
+                    controller: _valorPagamentoController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Valor do Pagamento'),
+                  ),
                   ElevatedButton(
-                    onPressed: () {
-                      _adicionarPagamento(
-                        PedidoPagamento(
-                          idPedido: _idPedido,
-                          id: DateTime.now().millisecondsSinceEpoch,
-                          valorPagamento: 20.0, // Exemplo fixo
-                        ),
-                      );
-                    },
+                    onPressed: _adicionarPagamento,
                     child: const Text('Adicionar Pagamento'),
                   ),
                 ],
@@ -148,6 +224,10 @@ class _TelaCadastroPedidoState extends State<TelaCadastroPedido> {
             ),
             if (_mensagemErro.isNotEmpty)
               Text(_mensagemErro, style: const TextStyle(color: Colors.red)),
+            const SizedBox(height: 10),
+            Text('Total dos Itens: R\$ ${totalItens.toStringAsFixed(2)}'),
+            Text('Total dos Pagamentos: R\$ ${totalPagamentos.toStringAsFixed(2)}'),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _salvarPedido,
               child: const Text('Salvar Pedido'),

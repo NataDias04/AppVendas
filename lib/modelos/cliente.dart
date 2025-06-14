@@ -3,26 +3,26 @@ class Cliente {
   String nome;
   String tipo;
   String cpfCnpj;
-  String email;
-  String telefone;
-  String cep;
-  String endereco;
-  String bairro;
-  String cidade;
-  String uf;
+  String? email;
+  String? telefone;
+  String? cep;
+  String? endereco;
+  String? bairro;
+  String? cidade;
+  String? uf;
 
   Cliente({
     required this.id,
     required this.nome,
     required this.tipo,
     required this.cpfCnpj,
-    required this.email,
-    required this.telefone,
-    required this.cep,
-    required this.endereco,
-    required this.bairro,
-    required this.cidade,
-    required this.uf,
+    this.email,
+    this.telefone,
+    this.cep,
+    this.endereco,
+    this.bairro,
+    this.cidade,
+    this.uf,
   });
 
   factory Cliente.fromJson(Map<String, dynamic> json) {

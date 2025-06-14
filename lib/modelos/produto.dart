@@ -5,8 +5,8 @@ class Produto {
   int qtdEstoque;
   double precoVenda;
   int status;
-  double custo;
-  String codigoBarras;
+  double? custo;
+  String? codigoBarras;
 
   Produto({
     required this.id,
@@ -15,8 +15,8 @@ class Produto {
     required this.qtdEstoque,
     required this.precoVenda,
     required this.status,
-    required this.custo,
-    required this.codigoBarras,
+    this.custo,
+    this.codigoBarras,
   });
 
   factory Produto.fromJson(Map<String, dynamic> json) {

@@ -26,9 +26,9 @@ class Pedido {
       idCliente: json['idCliente'],
       idUsuario: json['idUsuario'],
       totalPedido: json['totalPedido'],
-      dataCriacao: json['dataCriacao'],
-      itens: json['itens'],
-      pagamento: json['pagamento'],
+      dataCriacao: DateTime.parse(json['dataCriacao']),
+      itens: (json['itens'] as List).map((e) => PedidoItem.fromJson(e)).toList(),
+      pagamento: (json['pagamento'] as List).map((e) => PedidoPagamento.fromJson(e)).toList(),
     );
   }
 
@@ -38,9 +38,9 @@ class Pedido {
       'idCliente': idCliente,
       'idUsuario': idUsuario,
       'totalPedido': totalPedido,
-      'dataCriacao': dataCriacao,
-      'itens': itens,
-      'pagamento': pagamento,
+      'dataCriacao': dataCriacao.toIso8601String(),
+      'itens': itens.map((i) => i.toJson()).toList(),
+      'pagamento': pagamento.map((p) => p.toJson()).toList(),
     };
   }
 }

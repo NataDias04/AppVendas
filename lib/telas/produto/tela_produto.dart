@@ -241,7 +241,7 @@ class _TelaProdutoState extends State<TelaProduto> {
                               _precoController.text = produto.precoVenda.toString();
                               _estoqueController.text = produto.qtdEstoque.toString();
                               _custoController.text = produto.custo.toString();
-                              _codigoBarrasController.text = produto.codigoBarras;
+                              _codigoBarrasController.text = produto.codigoBarras.toString();
                               _unidadeSelecionada = produto.unidade;
                               _statusSelecionado = produto.status;
                             });

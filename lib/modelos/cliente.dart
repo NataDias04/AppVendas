@@ -25,23 +25,7 @@ class Cliente {
     this.uf,
   });
 
-  factory Cliente.fromJson(Map<String, dynamic> json) {
-    return Cliente(
-      id: json['id'],
-      nome: json['nome'],
-      tipo: json['tipo'],
-      cpfCnpj: json['cpfCnpj'],
-      email: json['email'],
-      telefone: json['telefone'],
-      cep: json['cep'],
-      endereco: json['endereco'],
-      bairro: json['bairro'],
-      cidade: json['cidade'],
-      uf: json['uf'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
+   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'nome': nome,
@@ -55,5 +39,22 @@ class Cliente {
       'cidade': cidade,
       'uf': uf,
     };
+  }
+
+  /// Ler do SQLite
+  factory Cliente.fromMap(Map<String, dynamic> map) {
+    return Cliente(
+      id: map['id'],
+      nome: map['nome'],
+      tipo: map['tipo'],
+      cpfCnpj: map['cpfCnpj'],
+      email: map['email'],
+      telefone: map['telefone'],
+      cep: map['cep'],
+      endereco: map['endereco'],
+      bairro: map['bairro'],
+      cidade: map['cidade'],
+      uf: map['uf'],
+    );
   }
 }

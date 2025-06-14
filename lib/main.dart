@@ -9,11 +9,9 @@ import 'telas/cliente/tela_cliente.dart';
 import 'modelos/usuario.dart';
 import 'telas/cliente/tela_visualizar_cliente.dart';
 import 'telas/pedido/tela_pedido.dart';
-import 'db/db_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initBanco();
   await verConteudoJSON();
   runApp(const MyApp());
 }

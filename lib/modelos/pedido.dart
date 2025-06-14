@@ -20,27 +20,27 @@ class Pedido {
     required this.pagamento,
   });
 
-  factory Pedido.fromJson(Map<String, dynamic> json) {
-    return Pedido(
-      id: json['id'],
-      idCliente: json['idCliente'],
-      idUsuario: json['idUsuario'],
-      totalPedido: json['totalPedido'],
-      dataCriacao: DateTime.parse(json['dataCriacao']),
-      itens: (json['itens'] as List).map((e) => PedidoItem.fromJson(e)).toList(),
-      pagamento: (json['pagamento'] as List).map((e) => PedidoPagamento.fromJson(e)).toList(),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
+  /// Para salvar no banco (somente os dados da tabela 'pedido')
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'idCliente': idCliente,
       'idUsuario': idUsuario,
       'totalPedido': totalPedido,
       'dataCriacao': dataCriacao.toIso8601String(),
-      'itens': itens.map((i) => i.toJson()).toList(),
-      'pagamento': pagamento.map((p) => p.toJson()).toList(),
     };
+  }
+
+  /// Para ler do banco (somente os dados da tabela 'pedido')
+  factory Pedido.fromMap(Map<String, dynamic> map) {
+    return Pedido(
+      id: map['id'],
+      idCliente: map['idCliente'],
+      idUsuario: map['idUsuario'],
+      totalPedido: map['totalPedido'],
+      dataCriacao: DateTime.parse(map['dataCriacao']),
+      itens: [], // Será preenchido depois com consulta separada
+      pagamento: [], // Será preenchido depois com consulta separada
+    );
   }
 }

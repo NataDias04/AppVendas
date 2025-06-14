@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'cliente_controller.dart'; 
+import 'cliente_controller.dart';
 import '../../modelos/cliente.dart';
 import 'tela_edicao_cliente.dart';
 
@@ -11,7 +11,8 @@ class VisualizarCliente extends StatefulWidget {
 }
 
 class _VisualizarClienteState extends State<VisualizarCliente> {
-  final ClienteController _controller = ClienteController(); 
+  final ClienteController _controller = ClienteController();
+  List<Cliente> _clientes = [];
   bool _isLoading = true;
 
   @override
@@ -20,10 +21,12 @@ class _VisualizarClienteState extends State<VisualizarCliente> {
     _carregarClientes();
   }
 
-
   Future<void> _carregarClientes() async {
     try {
-      await _controller.carregarClientes();
+      final clientes = await _controller.listarTodos();
+      setState(() {
+        _clientes = clientes;
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao carregar clientes: $e')),
@@ -35,60 +38,58 @@ class _VisualizarClienteState extends State<VisualizarCliente> {
     }
   }
 
+  Future<void> _removerCliente(int id) async {
+    await _controller.remover(id);
+    await _carregarClientes(); // Recarrega a lista após exclusão
+  }
+
   @override
   Widget build(BuildContext context) {
     Color azul = Colors.blue;
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text('Visualizar Clientes'),
-          ],
-        ),
+        title: const Center(child: Text('Visualizar Clientes')),
         backgroundColor: azul,
         foregroundColor: Colors.white,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator()) // Exibe o indicador de carregamento durante o carregamento
-          : _controller.clientes.isEmpty
-              ? const Center(child: Text('Nenhum cliente cadastrado.')) // Mensagem caso a lista de clientes esteja vazia
+          ? const Center(child: CircularProgressIndicator())
+          : _clientes.isEmpty
+              ? const Center(child: Text('Nenhum cliente cadastrado.'))
               : ListView.builder(
-                  itemCount: _controller.clientes.length,
+                  itemCount: _clientes.length,
                   itemBuilder: (context, index) {
-                    final cliente = _controller.clientes[index];
+                    final cliente = _clientes[index];
 
                     return Card(
                       elevation: 3,
-                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: ListTile(
                         title: Text(cliente.nome),
                         subtitle: Text(
-                          'Tipo: ${cliente.tipo == "PF" ? "Pessoa Física" : "Pessoa Jurídica"} - CPF/CNPJ: ${cliente.cpfCnpj}',
+                          'Tipo: ${cliente.tipo == "PF" ? "Pessoa Física" : "Pessoa Jurídica"}\nCPF/CNPJ: ${cliente.cpfCnpj}',
                         ),
+                        isThreeLine: true,
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                                icon: Icon(Icons.edit, color: azul),
-                                onPressed: () {
-                                    Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => TelaEdicaoCliente(cliente: cliente), // Passando o cliente selecionado
-                                    ),
-                                    );
-                                },
-                                ),
+                              icon: Icon(Icons.edit, color: azul),
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TelaEdicaoCliente(cliente: cliente),
+                                  ),
+                                );
+                                await _carregarClientes(); // Recarrega após voltar da tela de edição
+                              },
+                            ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                // A lógica para remover o cliente
-                                await _controller.remover(cliente.id);
-                                _carregarClientes(); // Recarregar a lista após remoção
-                              },
+                              onPressed: () async => _removerCliente(cliente.id),
                             ),
                           ],
                         ),

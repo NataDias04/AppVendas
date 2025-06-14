@@ -66,10 +66,10 @@ class TelaHome extends StatelessWidget {
               },
             ),
             _iconeMenu(
-              icon: Icons.inventory,
-              label: 'Produtos',
+              icon: Icons.list,
+              label: 'Pedidos',
               onTap: () {
-                Navigator.pushNamed(context, '/cadastroProduto');
+                Navigator.pushNamed(context, '/pedido');
               },
             ),
           ],

@@ -1,51 +1,45 @@
-import 'dart:convert';
+import 'package:sqflite/sqflite.dart';
 import '../../modelos/cliente.dart';
-import '../../utilitarios/persistencia_json.dart';
+import '../../db/db_helper.dart';
 
 class ClienteController {
-  final String _nomeArquivo = 'clientes.json';
   List<Cliente> clientes = [];
 
-  ClienteController();
-
-  Future<void> carregarClientes() async {
-    try {
-      final conteudo = await ArquivoHelper.lerArquivo(_nomeArquivo);
-      if (conteudo.isNotEmpty) {
-        final List<dynamic> jsonData = jsonDecode(conteudo);
-        clientes = jsonData.map((e) => Cliente.fromJson(e)).toList();
-      }
-    } catch (e) {
-      print('Erro ao carregar clientes: $e');
-    }
+  Future<Database> get database async {
+    return await DatabaseHelper.getDatabase();
   }
 
-  Future<void> salvarClientes() async {
-    try {
-      final jsonData = jsonEncode(clientes.map((c) => c.toJson()).toList());
-      print('Salvando JSON: $jsonData');
-      await ArquivoHelper.salvarArquivo(_nomeArquivo, jsonData);
-    } catch (e) {
-      print('Erro ao salvar clientes: $e');
-    }
+  Future<void> carregarClientes() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('cliente');
+    clientes = maps.map((map) => Cliente.fromMap(map)).toList();
   }
 
   Future<void> adicionar(Cliente cliente) async {
+    final db = await database;
+    await db.insert('cliente', cliente.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
     await carregarClientes();
-    clientes.add(cliente);
-    await salvarClientes();
   }
 
   Future<void> atualizar(Cliente clienteAtualizado) async {
-    final index = clientes.indexWhere((c) => c.id == clienteAtualizado.id);
-    if (index != -1) {
-      clientes[index] = clienteAtualizado;
-      await salvarClientes();
-    }
+    final db = await database;
+    await db.update(
+      'cliente',
+      clienteAtualizado.toMap(),
+      where: 'id = ?',
+      whereArgs: [clienteAtualizado.id],
+    );
+    await carregarClientes();
   }
 
   Future<void> remover(int id) async {
-    clientes.removeWhere((c) => c.id == id);
-    await salvarClientes();
+    final db = await database;
+    await db.delete('cliente', where: 'id = ?', whereArgs: [id]);
+    await carregarClientes();
+  }
+
+  Future<List<Cliente>> listarTodos() async {
+    await carregarClientes();
+    return clientes;
   }
 }

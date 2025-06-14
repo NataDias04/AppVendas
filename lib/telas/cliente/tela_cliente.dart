@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../modelos/cliente.dart';
 import 'cliente_controller.dart';
+import 'cep_service.dart';
 
 class TelaCadastroCliente extends StatefulWidget {
   const TelaCadastroCliente({super.key});
@@ -48,9 +49,10 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     final cidade = _cidadeController.text;
     final uf = _ufController.text;
 
-    if (nome.isEmpty || cpfCnpj.isEmpty || email.isEmpty || telefone.isEmpty || cep.isEmpty || endereco.isEmpty || bairro.isEmpty || cidade.isEmpty || uf.isEmpty) {
+    if (nome.isEmpty || cpfCnpj.isEmpty) {
       setState(() {
-        _mensagemErro = 'Todos os campos obrigatórios devem ser preenchidos.';
+        _mensagemErro = 'Preencha os campos obrigatórios.';
+        _mensagemAcerto = '';
       });
       return;
     }
@@ -58,13 +60,15 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     if (!_isCpfCnpjValido(cpfCnpj)) {
       setState(() {
         _mensagemErro = 'CPF ou CNPJ inválido.';
+        _mensagemAcerto = '';
       });
       return;
+      
     }
-
-    if (!_isEmailValido(email)) {
+    if (email.isNotEmpty && !_isEmailValido(email)) {
       setState(() {
         _mensagemErro = 'E-mail inválido.';
+        _mensagemAcerto = '';
       });
       return;
     }
@@ -72,12 +76,13 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     if (!_isTelefoneValido(telefone)) {
       setState(() {
         _mensagemErro = 'Telefone inválido.';
+        _mensagemAcerto = '';
       });
       return;
     }
 
     final novoCliente = Cliente(
-      id: DateTime.now().millisecondsSinceEpoch, 
+      id: DateTime.now().millisecondsSinceEpoch,
       nome: nome,
       tipo: 'comum',
       cpfCnpj: cpfCnpj,
@@ -90,8 +95,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
       uf: uf,
     );
 
-    
-    await _clienteController.adicionar(novoCliente); 
+    await _clienteController.adicionar(novoCliente);
 
     setState(() {
       _mensagemAcerto = 'Cliente cadastrado com sucesso!';
@@ -109,52 +113,76 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     _ufController.clear();
   }
 
+  Future<void> _buscarCEP() async {
+    final cep = _cepController.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cep.length != 8) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('CEP inválido.')));
+      return;
+    }
+
+    final endereco = await buscarEnderecoPorCEP(cep);
+    if (endereco != null) {
+      setState(() {
+        _enderecoController.text = endereco['logradouro'] ?? '';
+        _bairroController.text = endereco['bairro'] ?? '';
+        _cidadeController.text = endereco['localidade'] ?? '';
+        _ufController.text = endereco['uf'] ?? '';
+      });
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('CEP não encontrado.')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text('Cadastro de Cliente'),
-          ],
-        ),
+        title: const Text('Cadastro de Cliente'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _campoTexto(_nomeController, 'Nome', obrigatorio: true),
             _campoTexto(_cpfCnpjController, 'CPF/CNPJ', obrigatorio: true),
             _campoTexto(_emailController, 'E-mail', obrigatorio: true),
             _campoTexto(_telefoneController, 'Telefone', obrigatorio: true),
-            _campoTexto(_cepController, 'CEP', obrigatorio: true),
+            Row(
+              children: [
+                Expanded(
+                  child: _campoTexto(_cepController, 'CEP', obrigatorio: true),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _buscarCEP,
+                  child: const Text('Buscar CEP'),
+                ),
+              ],
+            ),
             _campoTexto(_enderecoController, 'Endereço', obrigatorio: true),
             _campoTexto(_bairroController, 'Bairro', obrigatorio: true),
             _campoTexto(_cidadeController, 'Cidade', obrigatorio: true),
             _campoTexto(_ufController, 'UF', obrigatorio: true),
 
             const SizedBox(height: 20),
-            Center(
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _cadastrarCliente,
-                  child: const Text(
-                    'Cadastrar',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+            ElevatedButton(
+              onPressed: _cadastrarCliente,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 20,
                 ),
+              ),
+              child: const Text(
+                'Cadastrar',
+                style: TextStyle(color: Colors.white),
               ),
             ),
             if (_mensagemAcerto.isNotEmpty)
@@ -162,7 +190,10 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
                   _mensagemAcerto,
-                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             if (_mensagemErro.isNotEmpty)
@@ -170,7 +201,10 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
                   _mensagemErro,
-                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
           ],
@@ -179,26 +213,18 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     );
   }
 
-  Widget _campoTexto(TextEditingController controller, String label, {bool obscure = false, bool obrigatorio = false}) {
+  Widget _campoTexto(
+    TextEditingController controller,
+    String label, {
+    bool obrigatorio = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
         controller: controller,
-        obscureText: obscure,
         decoration: InputDecoration(
           labelText: '$label${obrigatorio ? " *" : ""}',
-          labelStyle: TextStyle(color: Colors.grey[700]),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.blue, width: 2),
-          ),
-          errorStyle: const TextStyle(color: Colors.red),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

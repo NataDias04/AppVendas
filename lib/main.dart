@@ -8,6 +8,7 @@ import 'telas/usuario/tela_usuario.dart';
 import 'telas/cliente/tela_cliente.dart';
 import 'modelos/usuario.dart';
 import 'telas/cliente/tela_visualizar_cliente.dart';
+import 'telas/pedido/tela_pedido.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/usuarios': (context) => const TelaUsuario(),
         '/cadastroCliente': (context) => const TelaCadastroCliente(),
         '/visualizarcliente': (context) => const VisualizarCliente(),
+        '/pedido': (context) => const TelaCadastroPedido(),
       },
     );
   }

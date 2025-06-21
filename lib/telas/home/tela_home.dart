@@ -65,7 +65,6 @@ class TelaHome extends StatelessWidget {
                 Navigator.pushNamed(context, '/visualizarcliente');
               },
             ),
-            ),//adicionado agora
             _iconeMenu(
               icon: Icons.inventory,
               label: 'Produtos',
